@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Форма наблюдения | Trefoilapps</title>
+<meta name="description" content="Форма наблюдения за группой игроков в малой игре: режимы вживую и по видео, счётчики событий, нормативы по возрасту и предварительный профиль.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-683CR0QFQ8"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-683CR0QFQ8');
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Manrope:wght@600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F2F5F1; --surface:#FFFFFF; --fg:#14201A; --muted:#55645C; --line:#D5DDD6;
+  --accent:#1E6B49; --accent-soft:#DDEEE4; --warn:#9A4A12; --warn-soft:#F7E6D6;
+  --font-head:'Manrope','Inter',system-ui,sans-serif; --font-body:'Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1713; --surface:#16211B; --fg:#E5EEE8; --muted:#9BAAA1; --line:#2A3A31;
+    --accent:#5FC391; --accent-soft:#1B3328; --warn:#E5A267; --warn-soft:#3A2818;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1713; --surface:#16211B; --fg:#E5EEE8; --muted:#9BAAA1; --line:#2A3A31;
+  --accent:#5FC391; --accent-soft:#1B3328; --warn:#E5A267; --warn-soft:#3A2818;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.5;
+  padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+main{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--font-head);margin:0;text-wrap:balance}
+h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+h2{font-size:17px;font-weight:700}
+p{margin:0}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.brand{font-size:13px;color:var(--accent);font-weight:500;letter-spacing:.02em}
+.langs{display:flex;gap:4px}
+.langs button{min-height:36px;min-width:44px;padding:0 8px;font-size:13px}
+.langs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:500}
+.sub{color:var(--muted);font-size:14px}
+.why{background:var(--accent-soft);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.45}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:4px;flex:1 1 140px;min-width:0}
+label{font-size:13px;color:var(--muted)}
+input[type=text],input[type=date],input[type=number],select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:44px;width:100%;min-width:0}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:44px;padding:0 14px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:500}
+button.ghost{background:transparent}
+.pl{display:flex;gap:8px;flex-wrap:wrap}
+.pl button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:500}
+.seg{display:flex}
+.seg button{flex:1;border-radius:0}
+.seg button:first-child{border-radius:8px 0 0 8px}
+.seg button:last-child{border-radius:0 8px 8px 0;border-left:0}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);font-weight:500}
+.item{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.item .t{font-weight:500}
+.item .h{font-size:13px;color:var(--muted)}
+.ctrs{display:flex;gap:8px 16px;flex-wrap:wrap}
+.ctr{display:flex;align-items:center;gap:6px}
+.ctr .lab{font-size:13px;color:var(--muted);min-width:56px}
+.ctr button{min-width:44px;padding:0;font-size:20px;line-height:1}
+.ctr .n{min-width:28px;text-align:center;font-weight:500;font-variant-numeric:tabular-nums}
+.err{color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:8px 12px;font-size:14px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty{color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:16px}
+.games{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:6px;background:var(--accent-soft);border-radius:999px;padding:4px 4px 4px 12px;font-size:14px}
+.chip button{min-height:32px;min-width:32px;border-radius:999px;padding:0;border:0;background:transparent;color:var(--muted)}
+.bar{display:flex;flex-direction:column;gap:4px}
+.bar .top2{display:flex;justify-content:space-between;gap:8px;font-size:14px;flex-wrap:wrap}
+.bar .val{color:var(--muted);font-variant-numeric:tabular-nums}
+.track{height:8px;background:var(--bg);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.fill{height:100%;background:var(--accent)}
+.fill.low{background:var(--warn)}
+.note{font-size:13px;color:var(--muted)}
+.verdict{background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.verdict.wait{background:var(--warn-soft)}
+.verdict strong{font-family:var(--font-head);font-weight:700}
+.feedback{background:var(--accent-soft);border:1px dashed var(--accent);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.feedback p{font-size:14px}
+.feedback a{font-weight:500}
+ul{margin:0;padding-left:18px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+td input{width:68px;min-height:36px;padding:4px 6px}
+footer{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .25s}}
+</style>
+</head>
+<body>
+<main>
+  <header style="display:flex;flex-direction:column;gap:8px">
+    <div class="top">
+      <p class="brand" data-i18n="brand"></p>
+      <div class="langs" id="langs" role="group" aria-label="Language"></div>
+    </div>
+    <h1 data-i18n="h1"></h1>
+    <p class="sub" data-i18n="sub"></p>
+    <div class="why" data-i18n="why"></div>
+  </header>
+
+  <section class="card" aria-labelledby="h-players">
+    <h2 id="h-players" data-i18n="h_players"></h2>
+    <div class="pl" id="players"></div>
+    <div class="row">
+      <div class="field"><label for="pname" data-i18n="l_pname"></label><input type="text" id="pname" data-i18n-ph="ph_pname" autocomplete="off"></div>
+      <div class="field"><label for="pbirth" data-i18n="l_pbirth"></label><input type="date" id="pbirth"></div>
+    </div>
+    <div class="err" id="perr" role="alert" hidden></div>
+    <div class="actions">
+      <button class="primary" id="addp" data-i18n="add_player"></button>
+      <button class="ghost" id="delp" data-i18n="del_player" hidden></button>
+    </div>
+    <p class="note" id="agenote"></p>
+  </section>
+
+  <section class="card" aria-labelledby="h-game">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+      <h2 id="h-game"></h2>
+      <span class="note"><span data-i18n="observing"></span> <strong id="who"></strong></span>
+    </div>
+    <div class="seg" role="group" data-i18n-aria="mode_aria">
+      <button id="m-live" aria-pressed="true" data-i18n="m_live"></button>
+      <button id="m-video" aria-pressed="false" data-i18n="m_video"></button>
+    </div>
+    <p class="note" id="modenote"></p>
+    <div class="row">
+      <div class="field"><label for="mins" data-i18n="l_mins"></label><input type="number" id="mins" min="5" max="90" value="16" inputmode="numeric"></div>
+      <div class="field"><label for="fmt" data-i18n="l_fmt"></label><select id="fmt"></select></div>
+      <div class="field"><label for="pos" data-i18n="l_pos"></label><select id="pos"></select></div>
+      <div class="field"><label for="opp" data-i18n="l_opp"></label><select id="opp"></select></div>
+    </div>
+    <div id="items"></div>
+    <div class="err" id="err" role="alert" hidden></div>
+    <div class="actions">
+      <button class="primary" id="save" data-i18n="save_one"></button>
+      <button id="saveall" data-i18n="save_all"></button>
+      <button class="ghost" id="clearform" data-i18n="clear_c"></button>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-res">
+    <h2 id="h-res" data-i18n="h_res"></h2>
+    <div id="result"></div>
+    <div id="feedback-block" hidden></div>
+    <div class="actions">
+      <button id="sample" data-i18n="sample_btn"></button>
+      <button class="ghost" id="wipe" data-i18n="wipe_btn"></button>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-norm">
+    <h2 id="h-norm" data-i18n="h_norm"></h2>
+    <p class="note" data-i18n="norm_note"></p>
+    <div class="tbl" id="norms"></div>
+    <div class="actions"><button class="ghost" id="normreset" data-i18n="norm_reset"></button></div>
+  </section>
+
+  <footer>
+    <p><span data-i18n="foot1"></span> <a href="mailto:trefoilapps@gmail.com">trefoilapps@gmail.com</a></p>
+    <p data-i18n="foot2"></p>
+    <p data-i18n="foot3"></p>
+  </footer>
+</main>
+
+<script>
+var T = {
+ru:{
+brand:'Trefoilapps · разработка продуктов для детского футбола', title:'Форма наблюдения | Trefoilapps',
+desc:'Форма наблюдения за группой игроков в малой игре: режимы вживую и по видео, счётчики событий, нормативы по возрасту и предварительный профиль.',
+h1:'Форма наблюдения', sub:'Тестовая версия. Данные остаются только в этом браузере.',
+why:'Зачем это нужно: чтобы не терять важные наблюдения за игроками в 3v3–5v5. Через 2–3 игры появляется более честная картина — кто реально прогрессирует, а не просто много бегает. Это не оценка таланта, а инструмент для тренера.',
+h_players:'Игроки', l_pname:'Имя или код игрока', ph_pname:'Игрок 07', l_pbirth:'Дата рождения',
+add_player:'Добавить игрока', del_player:'Удалить выбранного', del_confirm:'Нажми ещё раз: удалить «{n}»',
+h_game:'Игра {n}', observing:'Наблюдаем:', no_player:'нет игрока', mode_aria:'Режим наблюдения', m_live:'Вживую', m_video:'По видео',
+note_live:'Вживую: 4 пункта, которые можно считать глазами, до трёх игроков за раз. Остальное оценивается по видео.',
+note_video:'По видео: все 9 пунктов. Можно прокрутить запись для каждого игрока отдельно и переключаться между ними.',
+l_mins:'Минут наблюдения', l_fmt:'Формат', l_pos:'Позиция', l_opp:'Соперник',
+f4:'4 на 4', f5:'5 на 5', f7:'7 на 7', f9:'9 на 9',
+pos_def:'Защита', pos_cen:'Центр', pos_wing:'Фланг', pos_fwd:'Нападение', opp_weak:'Слабее', opp_eq:'Равный', opp_strong:'Сильнее',
+save_one:'Сохранить игру игрока', save_all:'Сохранить всех', clear_c:'Обнулить счётчики',
+h_res:'Итог по выбранному игроку', sample_btn:'Загрузить пример', wipe_btn:'Удалить все данные', wipe_confirm:'Нажми ещё раз для удаления',
+h_norm:'Нормативы по возрасту', norm_note:'Значения на 10 минут игры, для долей в процентах. Это пилотные заглушки: замени их данными своих школ.',
+norm_reset:'Вернуть пилотные значения', th_metric:'Показатель', age_col:'{a} л.', norm_aria:'{m}, {a} лет',
+foot1:'Что улучшить? Напиши, какой пункт непонятен и чего не хватает:',
+foot2:'Страница собирает анонимную статистику посещений и нажатий на кнопки. Имена, даты рождения и счётчики никуда не отправляются и остаются в твоём браузере.',
+foot3:'© Trefoilapps, 2026',
+no_players:'Пока нет игроков. Добавь первого ниже или загрузи пример в блоке «Итог».',
+age_add:'Добавь игрока, чтобы видеть возраст и подходящий норматив.', age_nob:'{n}: дата рождения не указана.', age_txt:'{n}: {y} лет {m} мес.',
+age_early:' Родился в начале года: в своей группе может быть физически впереди.',
+age_late:' Родился в конце года: в своей группе может уступать физически, смотри на динамику.',
+e_name:'Введи имя или код игрока.', e_birth:'Укажи дату рождения, не позже сегодняшней.', e_need:'Сначала добавь игрока.',
+e_mins:'Минут наблюдения: от 5 до 90.', e_drib:'В обводке удачных не может быть больше, чем попыток.',
+e_pok:'Дошедших передач не может быть больше, чем всех.', e_pfwd:'Передач вперёд не может быть больше, чем дошедших.',
+e_lok:'В дальнем мяче попаданий не может быть больше, чем попыток.', e_l5:'В дальнем мяче максимум 5 попыток.',
+e_empty:'Счётчики пустые. Отметь хотя бы одно событие.', e_emptyall:'Счётчики пустые у всех игроков.',
+saved_n:'Сохранено игроков: {n}. ', not_saved:'Не сохранено: ',
+r_noplayer:'Добавь игрока и заполни форму. Для проверки можно загрузить пример.',
+r_nogames:'У игрока пока нет сохранённых игр. Заполни форму выше и нажми «Сохранить игру игрока».',
+chip:'Игра {n} · {m} мин', chip_live:' · вживую', chip_video:' · видео', rm_aria:'Убрать игру {n}',
+low_data:'мало данных ({a} из {b})', need_from:'нужно от {n}', need_video:'нужно видео', not_live:'вживую не отмечалось',
+per10:'{v} на 10 мин', norm_lbl:'норматив {v}',
+v_wait:'Нужно ещё игр: {n}', v_ok:'Данных достаточно для проверки методистом',
+v_wait_p:'Одна игра сильно зависит от соперников и состава. Оценка надёжнее по {n} играм.',
+v_ok_p:'Профиль набран по {n} играм. Следующий шаг: проверка методистом по видео и сравнение с прошлыми замерами.',
+v_str:'Сильные стороны сейчас: {s}', v_gro:'Зоны роста: {s}', v_pend:'Пока не оценено, нужен просмотр видео: {s}',
+v_disc:'Это профиль наблюдения, а не отбор и не оценка таланта. Нормативы пилотные: возрастная группа {a} лет, значения можно править в блоке ниже. Счётчики пересчитаны на 10 минут наблюдения.',
+fl_times:'раз', fl_att:'попыток', fl_ok:'удачно', fl_all:'всего', fl_reach:'дошло', fl_fwd:'вперёд', fl_hit:'попало',
+minus_aria:'{t}, {l}: минус', plus_aria:'{t}, {l}: плюс', sample_player:'Пример: игрок {n}',
+i_look:'Смотрит по сторонам', h_look:'Поднял голову и посмотрел на поле до получения мяча. Смотрел только на мяч: не считаем.',
+i_touch:'Первое касание', h_touch:'Принял мяч так, что сразу можно играть дальше. Остановил под себя: не считаем.',
+i_drib:'Обводка', h_drib:'Попытался обыграть соперника.',
+i_open:'Открывается без мяча', h_open:'Встал так, что партнёр мог ему отдать мяч.',
+i_pass:'Передачи', h_pass:'Все передачи, из них дошедшие и отданные вперёд.',
+i_weak:'Слабая нога', h_weak:'Сыграл слабой ногой, когда мог уйти на сильную.',
+i_press:'После потери мяча', h_press:'В первые 3 секунды побежал отбирать или назад.',
+i_long:'Дальний мяч', h_long:'Передача в заданную зону, до 5 попыток.',
+i_retry:'После ошибки', h_retry:'Снова попробовал то же самое в следующие 2 минуты.',
+m_dribok:'Обводка: удачных', m_pacc:'Точность передач', m_pfwd:'Передачи вперёд',
+fb_title:'Нужна твоя обратная связь',
+fb_text:'Ты уже сохранил наблюдения. Что было неудобно? Какого пункта не хватает? Какие метрики лишние для твоего возраста группы?',
+fb_link:'Написать на trefoilapps@gmail.com'
+},
+kk:{
+brand:'Trefoilapps · балалар футболына арналған өнімдер әзірлеу', title:'Бақылау формасы | Trefoilapps',
+desc:'Шағын ойында ойыншылар тобын бақылау формасы: тікелей және бейне режимдері, оқиға есептегіштері, жас бойынша нормативтер және алдын ала профиль.',
+h1:'Бақылау формасы', sub:'Сынақ нұсқа. Деректер тек осы браузерде сақталады.',
+why:'Не үшін керек: 3v3–5v5 ойындарында ойыншыларды бақылауды жоғалтпау үшін. 2–3 ойыннан кейін кім шынымен өсіп жатқаны, кім тек көп жүгіретіні туралы анығырақ сурет шығады. Бұл талант бағасы емес, жаттықтырушыға арналған құрал.',
+h_players:'Ойыншылар', l_pname:'Ойыншының аты немесе коды', ph_pname:'Ойыншы 07', l_pbirth:'Туған күні',
+add_player:'Ойыншы қосу', del_player:'Таңдалғанды жою', del_confirm:'Қайта бас: «{n}» жою',
+h_game:'Ойын {n}', observing:'Бақылап отырмыз:', no_player:'ойыншы жоқ', mode_aria:'Бақылау режимі', m_live:'Тікелей', m_video:'Бейне бойынша',
+note_live:'Тікелей: көзбен санауға болатын 4 тармақ, бір мезгілде үш ойыншыға дейін. Қалғаны бейне бойынша бағаланады.',
+note_video:'Бейне бойынша: барлық 9 тармақ. Жазбаны әр ойыншы үшін бөлек қарап, олардың арасында ауысуға болады.',
+l_mins:'Бақылау минуты', l_fmt:'Формат', l_pos:'Орны', l_opp:'Қарсылас',
+f4:'4-ке 4', f5:'5-ке 5', f7:'7-ге 7', f9:'9-ға 9',
+pos_def:'Қорғаушы', pos_cen:'Орталық', pos_wing:'Қапталдағы', pos_fwd:'Шабуылшы', opp_weak:'Әлсіздеу', opp_eq:'Тең', opp_strong:'Күштірек',
+save_one:'Ойыншының ойынын сақтау', save_all:'Барлығын сақтау', clear_c:'Есептегіштерді нөлдеу',
+h_res:'Таңдалған ойыншы бойынша қорытынды', sample_btn:'Мысалды жүктеу', wipe_btn:'Барлық деректі жою', wipe_confirm:'Жою үшін қайта бас',
+h_norm:'Жас бойынша нормативтер', norm_note:'Мәндер ойынның 10 минутына есептелген, үлестер пайызбен. Бұл сынақ мәндер: оларды өз мектептеріңіздің деректерімен ауыстырыңыз.',
+norm_reset:'Сынақ мәндерді қайтару', th_metric:'Көрсеткіш', age_col:'{a} ж.', norm_aria:'{m}, {a} жас',
+foot1:'Нені жақсарту керек? Қай тармақ түсініксіз және не жетіспейтінін жазыңыз:',
+foot2:'Бет сайтқа кіру мен батырмаларды басу туралы анонимді статистика жинайды. Аттар, туған күндер және есептегіштер ешқайда жіберілмейді, тек сіздің браузеріңізде қалады.',
+foot3:'© Trefoilapps, 2026',
+no_players:'Әзірге ойыншы жоқ. Төменнен біріншісін қосыңыз немесе «Қорытынды» блогында мысалды жүктеңіз.',
+age_add:'Жасы мен сәйкес нормативті көру үшін ойыншы қосыңыз.', age_nob:'{n}: туған күні көрсетілмеген.', age_txt:'{n}: {y} жас {m} ай.',
+age_early:' Жылдың басында туған: өз тобында физикалық жағынан алда болуы мүмкін.',
+age_late:' Жылдың соңында туған: өз тобында физикалық жағынан кейін қалуы мүмкін, динамикаға қараңыз.',
+e_name:'Ойыншының атын немесе кодын енгізіңіз.', e_birth:'Туған күнін көрсетіңіз, бүгіннен кеш емес.', e_need:'Алдымен ойыншы қосыңыз.',
+e_mins:'Бақылау минуты: 5-тен 90-ға дейін.', e_drib:'Допты алып өтуде сәттілер әрекеттерден көп бола алмайды.',
+e_pok:'Жеткен пастар барлық пастан көп бола алмайды.', e_pfwd:'Алға берілген пастар жеткен пастан көп бола алмайды.',
+e_lok:'Ұзын допта тиген әрекеттер барлық әрекеттен көп бола алмайды.', e_l5:'Ұзын допта ең көбі 5 әрекет.',
+e_empty:'Есептегіштер бос. Кемінде бір оқиғаны белгілеңіз.', e_emptyall:'Барлық ойыншыда есептегіштер бос.',
+saved_n:'Сақталған ойыншылар: {n}. ', not_saved:'Сақталмады: ',
+r_noplayer:'Ойыншы қосып, форманы толтырыңыз. Тексеру үшін мысалды жүктеуге болады.',
+r_nogames:'Ойыншыда әзірге сақталған ойын жоқ. Жоғарыдағы форманы толтырып, «Ойыншының ойынын сақтау» батырмасын басыңыз.',
+chip:'Ойын {n} · {m} мин', chip_live:' · тікелей', chip_video:' · бейне', rm_aria:'{n}-ойынды алып тастау',
+low_data:'дерек аз ({a} / {b})', need_from:'кемінде {n} керек', need_video:'бейне керек', not_live:'тікелей белгіленбеген',
+per10:'10 мин ішінде {v}', norm_lbl:'норматив {v}',
+v_wait:'Тағы ойын керек: {n}', v_ok:'Әдіскерге тексеруге деректер жеткілікті',
+v_wait_p:'Бір ойын қарсыластар мен құрамға қатты тәуелді. {n} ойын бойынша баға сенімдірек.',
+v_ok_p:'Профиль {n} ойын бойынша жиналды. Келесі қадам: әдіскердің бейне бойынша тексеруі және алдыңғы өлшемдермен салыстыру.',
+v_str:'Қазіргі күшті жақтары: {s}', v_gro:'Даму аймақтары: {s}', v_pend:'Әзірге бағаланбады, бейне қарау керек: {s}',
+v_disc:'Бұл бақылау профилі, іріктеу де, таланттың бағасы да емес. Нормативтер сынақ: {a} жас тобы, мәндерді төмендегі блокта өзгертуге болады. Есептегіштер 10 минутқа келтірілген.',
+fl_times:'рет', fl_att:'әрекет', fl_ok:'сәтті', fl_all:'барлығы', fl_reach:'жетті', fl_fwd:'алға', fl_hit:'тиді',
+minus_aria:'{t}, {l}: азайту', plus_aria:'{t}, {l}: көбейту', sample_player:'Мысал: ойыншы {n}',
+i_look:'Айналасына қарайды', h_look:'Допты алар алдында басын көтеріп, алаңға қарады. Тек допқа қараса, есептемейміз.',
+i_touch:'Бірінші тию', h_touch:'Допты бірден ойынды жалғастыруға болатындай қабылдады. Өз астына тоқтатса, есептемейміз.',
+i_drib:'Допты алып өту', h_drib:'Қарсыласты ойнап өтуге әрекет жасады.',
+i_open:'Допсыз ашылады', h_open:'Серіктесі допты бере алатындай тұрды.',
+i_pass:'Пастар', h_pass:'Барлық пастар, оның ішінде жеткені және алға берілгені.',
+i_weak:'Әлсіз аяқ', h_weak:'Күшті аяққа ауыспай, әлсіз аяқпен ойнады.',
+i_press:'Доп жоғалтқаннан кейін', h_press:'Алғашқы 3 секундта допты алуға немесе кері жүгірді.',
+i_long:'Ұзын доп', h_long:'Берілген аймаққа пас, 5 әрекетке дейін.',
+i_retry:'Қателіктен кейін', h_retry:'Келесі 2 минутта сол әрекетті қайта жасап көрді.',
+m_dribok:'Допты алып өту: сәттілері', m_pacc:'Пас дәлдігі', m_pfwd:'Алға берілген пастар',
+fb_title:'Пікіріңіз керек',
+fb_text:'Сіз бақылауларды сақтадыңыз. Не ыңғайсыз болды? Қандай тармақ жетіспейді? Сіздің жас тобыңыз үшін қай метрикалар артық?',
+fb_link:'trefoilapps@gmail.com жазыңыз'
+},
+en:{
+brand:'Trefoilapps · building products for youth football', title:'Observation form | Trefoilapps',
+desc:'Observation form for a group of players in small-sided games: live and video modes, event counters, age norms and a preliminary profile.',
+h1:'Observation form', sub:'Test version. Data stays in this browser only.',
+why:'Why this exists: so you don’t lose important observations of players in 3v3–5v5. After 2–3 games you get a clearer picture of who is actually progressing, not just running a lot. This is not a talent rating — it is a tool for the coach.',
+h_players:'Players', l_pname:'Player name or code', ph_pname:'Player 07', l_pbirth:'Date of birth',
+add_player:'Add player', del_player:'Delete selected', del_confirm:'Tap again to delete "{n}"',
+h_game:'Game {n}', observing:'Observing:', no_player:'no player', mode_aria:'Observation mode', m_live:'Live', m_video:'From video',
+note_live:'Live: 4 items you can count by eye, up to three players at a time. The rest is rated from video.',
+note_video:'From video: all 9 items. Replay the recording for each player separately and switch between them.',
+l_mins:'Minutes observed', l_fmt:'Format', l_pos:'Position', l_opp:'Opponent',
+f4:'4v4', f5:'5v5', f7:'7v7', f9:'9v9',
+pos_def:'Defender', pos_cen:'Central', pos_wing:'Winger', pos_fwd:'Forward', opp_weak:'Weaker', opp_eq:'Equal', opp_strong:'Stronger',
+save_one:'Save player\'s game', save_all:'Save all', clear_c:'Reset counters',
+h_res:'Summary for the selected player', sample_btn:'Load example', wipe_btn:'Delete all data', wipe_confirm:'Tap again to delete',
+h_norm:'Norms by age', norm_note:'Values per 10 minutes of play; shares in percent. These are pilot placeholders: replace them with data from your own schools.',
+norm_reset:'Restore pilot values', th_metric:'Metric', age_col:'{a} y.', norm_aria:'{m}, age {a}',
+foot1:'What should be improved? Tell us which item is unclear and what is missing:',
+foot2:'This page collects anonymous statistics on visits and button clicks. Names, dates of birth and counters are never sent anywhere and stay in your browser.',
+foot3:'© Trefoilapps, 2026',
+no_players:'No players yet. Add the first one below or load the example in the Summary block.',
+age_add:'Add a player to see age and the matching norm.', age_nob:'{n}: date of birth not set.', age_txt:'{n}: {y} years {m} months.',
+age_early:' Born early in the year: may be physically ahead in his age group.',
+age_late:' Born late in the year: may be physically behind in his age group, look at the trend.',
+e_name:'Enter a player name or code.', e_birth:'Enter a date of birth, no later than today.', e_need:'Add a player first.',
+e_mins:'Minutes observed: from 5 to 90.', e_drib:'Successful dribbles cannot exceed attempts.',
+e_pok:'Completed passes cannot exceed total passes.', e_pfwd:'Forward passes cannot exceed completed passes.',
+e_lok:'On-target long balls cannot exceed attempts.', e_l5:'Long ball: 5 attempts at most.',
+e_empty:'Counters are empty. Mark at least one event.', e_emptyall:'Counters are empty for all players.',
+saved_n:'Players saved: {n}. ', not_saved:'Not saved: ',
+r_noplayer:'Add a player and fill in the form. You can load the example to try it.',
+r_nogames:'This player has no saved games yet. Fill in the form above and tap "Save player\'s game".',
+chip:'Game {n} · {m} min', chip_live:' · live', chip_video:' · video', rm_aria:'Remove game {n}',
+low_data:'not enough data ({a} of {b})', need_from:'need at least {n}', need_video:'needs video', not_live:'not recorded live',
+per10:'{v} per 10 min', norm_lbl:'norm {v}',
+v_wait:'More games needed: {n}', v_ok:'Enough data for a coach-methodologist review',
+v_wait_p:'One game depends heavily on opponents and lineup. The picture is more reliable over {n} games.',
+v_ok_p:'Profile built over {n} games. Next step: a methodologist reviews the video and compares with earlier measurements.',
+v_str:'Current strengths: {s}', v_gro:'Growth areas: {s}', v_pend:'Not rated yet, video review needed: {s}',
+v_disc:'This is an observation profile, not a selection decision or a talent rating. Norms are pilot values: age group {a}, editable in the block below. Counters are scaled to 10 minutes of observation.',
+fl_times:'times', fl_att:'attempts', fl_ok:'successful', fl_all:'total', fl_reach:'reached', fl_fwd:'forward', fl_hit:'on target',
+minus_aria:'{t}, {l}: minus', plus_aria:'{t}, {l}: plus', sample_player:'Example: player {n}',
+i_look:'Scans the field', h_look:'Lifted his head and looked at the field before receiving the ball. If he only looked at the ball, do not count.',
+i_touch:'First touch', h_touch:'Controlled the ball so he can play on at once. Stopped it under himself: do not count.',
+i_drib:'Dribbling', h_drib:'Tried to beat an opponent.',
+i_open:'Moves off the ball', h_open:'Positioned so a teammate could pass to him.',
+i_pass:'Passing', h_pass:'All passes, including those that reached a teammate and those played forward.',
+i_weak:'Weaker foot', h_weak:'Played with the weaker foot when he could have switched to the stronger one.',
+i_press:'After losing the ball', h_press:'Within 3 seconds, ran to win the ball back or dropped back.',
+i_long:'Long ball', h_long:'A pass into the target zone, up to 5 attempts.',
+i_retry:'After a mistake', h_retry:'Tried the same thing again within the next 2 minutes.',
+m_dribok:'Dribbles: successful', m_pacc:'Pass accuracy', m_pfwd:'Forward passes',
+fb_title:'We need your feedback',
+fb_text:'You have already saved observations. What felt inconvenient? Which item is missing? Which metrics are unnecessary for your age group?',
+fb_link:'Write to trefoilapps@gmail.com'
+},
+es:{
+brand:'Trefoilapps · desarrollo de productos para el fútbol infantil', title:'Formulario de observación | Trefoilapps',
+desc:'Formulario de observación de un grupo de jugadores en partidos reducidos: modos en directo y por vídeo, contadores de eventos, normas por edad y perfil preliminar.',
+h1:'Formulario de observación', sub:'Versión de prueba. Los datos solo se guardan en este navegador.',
+why:'Para qué sirve: para no perder observaciones importantes de los jugadores en 3v3–5v5. Después de 2–3 partidos aparece una imagen más clara de quién progresa de verdad y quién solo corre mucho. No es una valoración de talento, es una herramienta para el entrenador.',
+h_players:'Jugadores', l_pname:'Nombre o código del jugador', ph_pname:'Jugador 07', l_pbirth:'Fecha de nacimiento',
+add_player:'Añadir jugador', del_player:'Eliminar seleccionado', del_confirm:'Pulsa otra vez para eliminar «{n}»',
+h_game:'Partido {n}', observing:'Observamos a:', no_player:'sin jugador', mode_aria:'Modo de observación', m_live:'En directo', m_video:'Por vídeo',
+note_live:'En directo: 4 puntos que se pueden contar a ojo, hasta tres jugadores a la vez. El resto se valora por vídeo.',
+note_video:'Por vídeo: los 9 puntos. Puedes revisar la grabación de cada jugador por separado y cambiar entre ellos.',
+l_mins:'Minutos observados', l_fmt:'Formato', l_pos:'Posición', l_opp:'Rival',
+f4:'4 contra 4', f5:'5 contra 5', f7:'7 contra 7', f9:'9 contra 9',
+pos_def:'Defensa', pos_cen:'Centro', pos_wing:'Banda', pos_fwd:'Delantero', opp_weak:'Más débil', opp_eq:'Igual', opp_strong:'Más fuerte',
+save_one:'Guardar partido del jugador', save_all:'Guardar a todos', clear_c:'Poner contadores a cero',
+h_res:'Resumen del jugador seleccionado', sample_btn:'Cargar ejemplo', wipe_btn:'Borrar todos los datos', wipe_confirm:'Pulsa otra vez para borrar',
+h_norm:'Normas por edad', norm_note:'Valores por cada 10 minutos de juego; las proporciones en porcentaje. Son valores piloto provisionales: sustitúyelos por datos de tus escuelas.',
+norm_reset:'Restaurar valores piloto', th_metric:'Indicador', age_col:'{a} a.', norm_aria:'{m}, {a} años',
+foot1:'¿Qué mejorar? Escribe qué punto no se entiende y qué falta:',
+foot2:'Esta página recoge estadísticas anónimas de visitas y pulsaciones de botones. Los nombres, las fechas de nacimiento y los contadores no se envían a ningún sitio y se quedan en tu navegador.',
+foot3:'© Trefoilapps, 2026',
+no_players:'Aún no hay jugadores. Añade el primero abajo o carga el ejemplo en el bloque Resumen.',
+age_add:'Añade un jugador para ver la edad y la norma correspondiente.', age_nob:'{n}: fecha de nacimiento sin indicar.', age_txt:'{n}: {y} años {m} meses.',
+age_early:' Nació a principios de año: puede estar físicamente por delante en su grupo.',
+age_late:' Nació a finales de año: puede estar físicamente por detrás en su grupo, fíjate en la evolución.',
+e_name:'Introduce el nombre o código del jugador.', e_birth:'Indica la fecha de nacimiento, no posterior a hoy.', e_need:'Primero añade un jugador.',
+e_mins:'Minutos observados: de 5 a 90.', e_drib:'Los regates logrados no pueden superar los intentos.',
+e_pok:'Los pases completados no pueden superar el total de pases.', e_pfwd:'Los pases hacia adelante no pueden superar los completados.',
+e_lok:'Los balones largos en zona no pueden superar los intentos.', e_l5:'Balón largo: 5 intentos como máximo.',
+e_empty:'Los contadores están vacíos. Marca al menos un evento.', e_emptyall:'Los contadores están vacíos en todos los jugadores.',
+saved_n:'Jugadores guardados: {n}. ', not_saved:'No guardado: ',
+r_noplayer:'Añade un jugador y rellena el formulario. Para probar, puedes cargar el ejemplo.',
+r_nogames:'Este jugador aún no tiene partidos guardados. Rellena el formulario de arriba y pulsa «Guardar partido del jugador».',
+chip:'Partido {n} · {m} min', chip_live:' · directo', chip_video:' · vídeo', rm_aria:'Quitar el partido {n}',
+low_data:'pocos datos ({a} de {b})', need_from:'hacen falta al menos {n}', need_video:'requiere vídeo', not_live:'no se registró en directo',
+per10:'{v} cada 10 min', norm_lbl:'norma {v}',
+v_wait:'Faltan partidos: {n}', v_ok:'Datos suficientes para la revisión del metodólogo',
+v_wait_p:'Un solo partido depende mucho de los rivales y de la alineación. La valoración es más fiable con {n} partidos.',
+v_ok_p:'Perfil elaborado con {n} partidos. Siguiente paso: revisión del metodólogo con vídeo y comparación con mediciones anteriores.',
+v_str:'Puntos fuertes actuales: {s}', v_gro:'Áreas de mejora: {s}', v_pend:'Aún sin valorar, hace falta revisar vídeo: {s}',
+v_disc:'Es un perfil de observación, no una selección ni una valoración de talento. Las normas son valores piloto: grupo de edad {a}, se pueden editar en el bloque de abajo. Los contadores se han escalado a 10 minutos de observación.',
+fl_times:'veces', fl_att:'intentos', fl_ok:'logrados', fl_all:'total', fl_reach:'llegaron', fl_fwd:'adelante', fl_hit:'en zona',
+minus_aria:'{t}, {l}: menos', plus_aria:'{t}, {l}: más', sample_player:'Ejemplo: jugador {n}',
+i_look:'Mira el campo', h_look:'Levantó la cabeza y miró el campo antes de recibir el balón. Si solo miró el balón, no se cuenta.',
+i_touch:'Primer toque', h_touch:'Controló el balón para seguir jugando de inmediato. Si lo paró bajo el pie, no se cuenta.',
+i_drib:'Regate', h_drib:'Intentó superar a un rival.',
+i_open:'Desmarque sin balón', h_open:'Se colocó de modo que un compañero pudiera pasarle.',
+i_pass:'Pases', h_pass:'Todos los pases, incluidos los que llegaron al compañero y los jugados hacia adelante.',
+i_weak:'Pierna menos hábil', h_weak:'Jugó con la pierna menos hábil cuando podía pasar a la buena.',
+i_press:'Tras perder el balón', h_press:'En los primeros 3 segundos fue a recuperar el balón o replegó.',
+i_long:'Balón largo', h_long:'Pase a la zona indicada, hasta 5 intentos.',
+i_retry:'Tras un error', h_retry:'Volvió a intentar lo mismo en los 2 minutos siguientes.',
+m_dribok:'Regates logrados', m_pacc:'Precisión de pase', m_pfwd:'Pases hacia adelante',
+fb_title:'Necesitamos tu opinión',
+fb_text:'Ya has guardado observaciones. ¿Qué resultó incómodo? ¿Qué punto falta? ¿Qué métricas sobran para tu grupo de edad?',
+fb_link:'Escribe a trefoilapps@gmail.com'
+}
+};
+
+var LANGS=[['ru','RU'],['kk','ҚАЗ'],['en','EN'],['es','ES']];
+var STORE = 'forma-nablyudeniya-v3', OLD = 'forma-nablyudeniya-v2', LSTORE='forma-lang';
+var lang='ru';
+function detectLang(){
+  try{ var s=localStorage.getItem(LSTORE); if(s&&T[s]) return s; }catch(e){}
+  var n=((navigator.language||'ru')+'').toLowerCase();
+  if(n.indexOf('kk')===0) return 'kk';
+  if(n.indexOf('es')===0) return 'es';
+  if(n.indexOf('en')===0) return 'en';
+  return 'ru';
+}
+function t(k,v){
+  var s=(T[lang]&&T[lang][k]); if(s===undefined) s=T.ru[k]; if(s===undefined) s=k;
+  if(v){ for(var x in v){ s=s.split('{'+x+'}').join(v[x]); } }
+  return s;
+}
+function $(id){ return document.getElementById(id); }
+var NEED = 3;
+function track(n){ try{ if(window.gtag) window.gtag('event',n); }catch(e){} }
+
+// lowPrio = true means lower priority for U7-U9
+var ITEMS = [
+ {live:false, k:'look',  lowPrio:false, f:[['look','fl_times']]},
+ {live:false, k:'touch', lowPrio:false, f:[['touch','fl_times']]},
+ {live:true,  k:'drib',  lowPrio:false, f:[['dribA','fl_att'],['dribOk','fl_ok']]},
+ {live:false, k:'open',  lowPrio:false, f:[['open','fl_times']]},
+ {live:true,  k:'pass',  lowPrio:false, f:[['passAll','fl_all'],['passOk','fl_reach'],['passFwd','fl_fwd']]},
+ {live:false, k:'weak',  lowPrio:true,  f:[['weak','fl_times']]},
+ {live:true,  k:'press', lowPrio:false, f:[['press','fl_times']]},
+ {live:true,  k:'long',  lowPrio:true,  f:[['longA','fl_att'],['longOk','fl_hit']]},
+ {live:false, k:'retry', lowPrio:true,  f:[['retry','fl_times']]}
+];
+var METRICS = [
+ {nk:'i_look', kind:'count', key:'look'},
+ {nk:'i_touch', kind:'count', key:'touch'},
+ {nk:'m_dribok', kind:'rate', num:'dribOk', den:'dribA', min:3},
+ {nk:'i_open', kind:'count', key:'open'},
+ {nk:'m_pacc', kind:'rate', num:'passOk', den:'passAll', min:5},
+ {nk:'m_pfwd', kind:'rate', num:'passFwd', den:'passOk', min:4},
+ {nk:'i_weak', kind:'count', key:'weak'},
+ {nk:'i_press', kind:'count', key:'press'},
+ {nk:'i_long', kind:'rate', num:'longOk', den:'longA', min:3},
+ {nk:'i_retry', kind:'count', key:'retry'}
+];
+var AGES = [7,8,9,10,11];
+var NORMS_DEF = [
+ [5,6,7,8,9],
+ [5,6,7,8,9],
+ [0.40,0.45,0.50,0.50,0.50],
+ [5,6,7,8,9],
+ [0.55,0.62,0.68,0.72,0.75],
+ [0.20,0.25,0.30,0.32,0.35],
+ [1.5,2,2.5,3,3.5],
+ [2.5,3,3.5,4,4.5],
+ [0.40,0.50,0.55,0.60,0.65],
+ [2,2,2.5,2.5,3]
+];
+var FMTS=['f4','f5','f7','f9'], POSS=['pos_def','pos_cen','pos_wing','pos_fwd'], OPPS=['opp_weak','opp_eq','opp_strong'];
+var DEF_META={fmt:'f4',pos:'pos_cen',opp:'opp_eq'};
+var ALL_KEYS = [], LIVE_KEYS = [];
+ITEMS.forEach(function(it){ it.f.forEach(function(p){ ALL_KEYS.push(p[0]); if(it.live) LIVE_KEYS.push(p[0]); }); });
+
+var norms = JSON.parse(JSON.stringify(NORMS_DEF));
+var players = [], activeId = null, mode = 'live', draft = {};
+
+function uid(){ return 'p'+Date.now().toString(36)+Math.floor(Math.random()*1e5).toString(36); }
+function active(){ for(var i=0;i<players.length;i++){ if(players[i].id===activeId) return players[i]; } return null; }
+function keysFor(md){ return md==='live'?LIVE_KEYS:ALL_KEYS; }
+function zeroC(){ var o={}; ALL_KEYS.forEach(function(k){ o[k]=0; }); return o; }
+function newDraft(){ return {c:zeroC(),mins:16,fmt:DEF_META.fmt,pos:DEF_META.pos,opp:DEF_META.opp}; }
+function getDraft(id){ if(!draft[id]) draft[id]=newDraft(); return draft[id]; }
+
+function persist(){
+  try{ localStorage.setItem(STORE, JSON.stringify({players:players,active:activeId,mode:mode,norms:norms})); }catch(e){}
+}
+function load(){
+  try{
+    var raw=localStorage.getItem(STORE);
+    if(raw){
+      var d=JSON.parse(raw); players=d.players||[]; activeId=d.active||null; mode=d.mode||'live';
+      if(d.norms&&d.norms.length===METRICS.length) norms=d.norms;
+    } else {
+      var o=localStorage.getItem(OLD);
+      if(o){
+        var q=JSON.parse(o);
+        if(q.players){ players=q.players; activeId=q.active||null; mode=q.mode||'live'; if(q.norms) norms=q.norms; }
+      }
+    }
+  }catch(e){}
+  // ensure integration fields exist
+  players.forEach(function(p){
+    if(p.externalId===undefined) p.externalId=null;
+    if(p.groupId===undefined) p.groupId=null;
+  });
+  if(!active()&&players.length) activeId=players[0].id;
+}
+
+function ageMonthsOf(b){
+  if(!b) return null;
+  var d=new Date(b+'T00:00:00'), n=new Date();
+  if(isNaN(d.getTime())) return null;
+  var m=(n.getFullYear()-d.getFullYear())*12+(n.getMonth()-d.getMonth());
+  if(n.getDate()<d.getDate()) m--;
+  return m>=0?m:null;
+}
+function ageYearOf(p){
+  var m=p?ageMonthsOf(p.birth):null;
+  var y=m===null?9:Math.floor(m/12);
+  return Math.min(11,Math.max(7,y));
+}
+function ageNote(){
+  var p=active(), el=$('agenote');
+  if(!p){ el.textContent=t('age_add'); return; }
+  var m=ageMonthsOf(p.birth);
+  if(m===null){ el.textContent=t('age_nob',{n:p.name}); return; }
+  var mon=new Date(p.birth+'T00:00:00').getMonth();
+  var txt=t('age_txt',{n:p.name,y:Math.floor(m/12),m:m%12});
+  if(mon<=2) txt+=t('age_early'); else if(mon>=9) txt+=t('age_late');
+  el.textContent=txt;
+}
+
+function showErr(id,msg){ var e=$(id); e.textContent=msg; e.hidden=false; }
+function hideErr(id){ $(id).hidden=true; }
+
+function buildForm(){
+  var host=$('items'); host.textContent='';
+  ITEMS.forEach(function(it){
+    var d=document.createElement('div'); d.className='item';
+    d.dataset.live=it.live?'1':'0';
+    var ti=document.createElement('div'); ti.className='t';
+    ti.textContent=t('i_'+it.k);
+    var h=document.createElement('div'); h.className='h'; h.textContent=t('h_'+it.k);
+    var c=document.createElement('div'); c.className='ctrs';
+    it.f.forEach(function(pp){
+      var lab=t(pp[1]), name=t('i_'+it.k);
+      var w=document.createElement('div'); w.className='ctr';
+      var l=document.createElement('span'); l.className='lab'; l.textContent=lab;
+      var m=document.createElement('button'); m.textContent='−'; m.setAttribute('aria-label',t('minus_aria',{t:name,l:lab})); m.dataset.k=pp[0]; m.dataset.d='-1';
+      var n=document.createElement('span'); n.className='n'; n.id='n_'+pp[0]; n.textContent='0';
+      var pl=document.createElement('button'); pl.textContent='+'; pl.setAttribute('aria-label',t('plus_aria',{t:name,l:lab})); pl.dataset.k=pp[0]; pl.dataset.d='1';
+      w.appendChild(l); w.appendChild(m); w.appendChild(n); w.appendChild(pl); c.appendChild(w);
+    });
+    d.appendChild(ti); d.appendChild(h); d.appendChild(c); host.appendChild(d);
+  });
+}
+function fillSelect(id,codes,def){
+  var s=$(id), cur=s.value||def; s.textContent='';
+  codes.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=t(c); s.appendChild(o); });
+  s.value=codes.indexOf(cur)>=0?cur:def;
+}
+
+function applyMode(){
+  $('m-live').setAttribute('aria-pressed',mode==='live'?'true':'false');
+  $('m-video').setAttribute('aria-pressed',mode==='video'?'true':'false');
+  var items=$('items').children;
+  for(var i=0;i<items.length;i++){ items[i].hidden=(mode==='live'&&items[i].dataset.live==='0'); }
+  $('modenote').textContent=t(mode==='live'?'note_live':'note_video');
+}
+
+function paintDraft(){
+  var p=active();
+  var d=p?getDraft(p.id):newDraft();
+  ALL_KEYS.forEach(function(k){ var el=$('n_'+k); if(el) el.textContent=d.c[k]; });
+  $('mins').value=d.mins;
+  [['fmt',FMTS],['pos',POSS],['opp',OPPS]].forEach(function(a){ $(a[0]).value=a[1].indexOf(d[a[0]])>=0?d[a[0]]:DEF_META[a[0]]; });
+  $('who').textContent=p?p.name:t('no_player');
+  $('h-game').textContent=t('h_game',{n:p?p.games.length+1:1});
+}
+
+function renderPlayers(){
+  var host=$('players'); host.textContent='';
+  if(!players.length){
+    var e=document.createElement('div'); e.className='empty'; e.style.width='100%';
+    e.textContent=t('no_players'); host.appendChild(e);
+  }
+  players.forEach(function(p){
+    var b=document.createElement('button');
+    b.textContent=p.name+' · '+p.games.length+'/'+NEED; b.dataset.pid=p.id;
+    b.setAttribute('aria-pressed',p.id===activeId?'true':'false');
+    host.appendChild(b);
+  });
+  $('delp').hidden=!players.length;
+  ageNote();
+}
+
+function sumK(p,k){ var s=0; p.games.forEach(function(g){ s+=g[k]||0; }); return s; }
+function hasKey(g,k){ return !g.rec || g.rec.indexOf(k)>=0; }
+
+function compute(p){
+  var ai=ageYearOf(p)-7;
+  return METRICS.map(function(m,i){
+    var tg=norms[i][ai], name=t(m.nk);
+    if(m.kind==='count'){
+      var gs=p.games.filter(function(g){ return hasKey(g,m.key); });
+      if(!gs.length) return {name:name, pct:null, count:true, text:t('need_video'), note:t('not_live')};
+      var mins=0, tot=0; gs.forEach(function(g){ mins+=g.mins||16; tot+=g[m.key]||0; });
+      var per=tot/(mins||16)*10;
+      return {name:name, pct:Math.min(100,per/tg*100), text:t('per10',{v:Math.round(per*10)/10}), note:t('norm_lbl',{v:tg})};
+    }
+    var num=sumK(p,m.num), den=sumK(p,m.den);
+    if(den<m.min) return {name:name, pct:null, text:t('low_data',{a:num,b:den}), note:t('need_from',{n:m.min})};
+    var v=num/den;
+    return {name:name, pct:Math.min(100,v/tg*100), text:Math.round(v*100)+'% ('+num+'/'+den+')', note:t('norm_lbl',{v:Math.round(tg*100)+'%'})};
+  });
+}
+
+function renderFeedback(p){
+  var host=$('feedback-block');
+  if(!p || p.games.length < 1 || p.games.length > 2){ host.hidden=true; host.textContent=''; return; }
+  host.hidden=false;
+  host.innerHTML='';
+  var box=document.createElement('div'); box.className='feedback';
+  var h=document.createElement('strong'); h.textContent=t('fb_title');
+  var txt=document.createElement('p'); txt.textContent=t('fb_text');
+  var link=document.createElement('a'); link.href='mailto:trefoilapps@gmail.com?subject=Observation form feedback'; link.textContent=t('fb_link');
+  box.appendChild(h); box.appendChild(txt); box.appendChild(link);
+  host.appendChild(box);
+}
+
+function render(){
+  var p=active();
+  var host=$('result'); host.textContent='';
+  host.style.cssText='display:flex;flex-direction:column;gap:14px';
+  if(!p || !p.games.length){
+    var e=document.createElement('div'); e.className='empty';
+    e.textContent=t(!p?'r_noplayer':'r_nogames'); host.appendChild(e);
+    renderFeedback(p);
+    return;
+  }
+  var gl=document.createElement('div'); gl.className='games';
+  p.games.forEach(function(g,i){
+    var c=document.createElement('div'); c.className='chip';
+    var s=document.createElement('span');
+    s.textContent=t('chip',{n:i+1,m:g.mins||16})+(g.mode==='live'?t('chip_live'):(g.mode==='video'?t('chip_video'):''));
+    var x=document.createElement('button'); x.textContent='×'; x.setAttribute('aria-label',t('rm_aria',{n:i+1})); x.dataset.rm=i;
+    c.appendChild(s); c.appendChild(x); gl.appendChild(c);
+  });
+  host.appendChild(gl);
+
+  var res=compute(p), have=res.filter(function(r){ return r.pct!==null; });
+  res.forEach(function(r){
+    var b=document.createElement('div'); b.className='bar';
+    var top=document.createElement('div'); top.className='top2';
+    var a=document.createElement('span'); a.textContent=r.name;
+    var v=document.createElement('span'); v.className='val'; v.textContent=r.text+' · '+r.note;
+    top.appendChild(a); top.appendChild(v); b.appendChild(top);
+    var tr=document.createElement('div'); tr.className='track';
+    var f=document.createElement('div'); f.className='fill'+(r.pct!==null&&r.pct<50?' low':''); f.style.width=(r.pct===null?0:Math.round(r.pct))+'%';
+    tr.appendChild(f); b.appendChild(tr); host.appendChild(b);
+  });
+
+  var sorted=have.slice().sort(function(a,b){ return b.pct-a.pct; });
+  var ver=document.createElement('div');
+  var left=NEED-p.games.length;
+  ver.className='verdict'+(left>0?' wait':'');
+  var st=document.createElement('strong');
+  st.textContent=left>0?t('v_wait',{n:left}):t('v_ok');
+  ver.appendChild(st);
+  var pp=document.createElement('p');
+  pp.textContent=left>0?t('v_wait_p',{n:NEED}):t('v_ok_p',{n:p.games.length});
+  ver.appendChild(pp);
+  var ul=document.createElement('ul');
+  if(sorted.length>=4){
+    var s2=sorted.slice(0,2).map(function(r){ return r.name; }).join(', ');
+    var g2=sorted.slice(-2).map(function(r){ return r.name; }).reverse().join(', ');
+    var l1=document.createElement('li'); l1.textContent=t('v_str',{s:s2});
+    var l2=document.createElement('li'); l2.textContent=t('v_gro',{s:g2});
+    ul.appendChild(l1); ul.appendChild(l2);
+  }
+  var pend=res.filter(function(r){ return r.count && r.pct===null; }).map(function(r){ return r.name; });
+  if(pend.length){
+    var l3=document.createElement('li'); l3.textContent=t('v_pend',{s:pend.join(', ')});
+    ul.appendChild(l3);
+  }
+  if(ul.children.length) ver.appendChild(ul);
+  host.appendChild(ver);
+  var nt=document.createElement('p'); nt.className='note';
+  nt.textContent=t('v_disc',{a:ageYearOf(p)});
+  host.appendChild(nt);
+
+  renderFeedback(p);
+}
+
+function normShow(m,v){ return m.kind==='rate'?Math.round(v*100):v; }
+function buildNorms(){
+  var host=$('norms'); host.textContent='';
+  var tb=document.createElement('table'), hd=document.createElement('tr');
+  [t('th_metric')].concat(AGES.map(function(a){ return t('age_col',{a:a}); })).forEach(function(x){ var th=document.createElement('th'); th.textContent=x; hd.appendChild(th); });
+  tb.appendChild(hd);
+  METRICS.forEach(function(m,i){
+    var tr=document.createElement('tr'), td=document.createElement('td');
+    td.textContent=t(m.nk)+(m.kind==='rate'?' (%)':''); tr.appendChild(td);
+    AGES.forEach(function(a,j){
+      var c=document.createElement('td'), inp=document.createElement('input');
+      inp.type='number'; inp.min='0'; inp.step=m.kind==='rate'?'1':'0.5'; if(m.kind==='rate') inp.max='100';
+      inp.value=normShow(m,norms[i][j]);
+      inp.setAttribute('aria-label',t('norm_aria',{m:t(m.nk),a:a}));
+      inp.addEventListener('change',function(){
+        var v=parseFloat(inp.value);
+        if(!(v>0)){ inp.value=normShow(m,norms[i][j]); return; }
+        norms[i][j]=m.kind==='rate'?v/100:v; persist(); render(); track('norm_edited');
+      });
+      c.appendChild(inp); tr.appendChild(c);
+    });
+    tb.appendChild(tr);
+  });
+  host.appendChild(tb);
+}
+
+function validate(p){
+  var d=getDraft(p.id), c=d.c, ks=keysFor(mode);
+  if(!(d.mins>=5&&d.mins<=90)) return t('e_mins');
+  if(c.dribOk>c.dribA) return t('e_drib');
+  if(c.passOk>c.passAll) return t('e_pok');
+  if(c.passFwd>c.passOk) return t('e_pfwd');
+  if(c.longOk>c.longA) return t('e_lok');
+  if(c.longA>5) return t('e_l5');
+  var total=0; ks.forEach(function(k){ total+=c[k]; });
+  if(total===0) return t('e_empty');
+  return '';
+}
+function saveGame(p){
+  var d=getDraft(p.id), g={}, ks=keysFor(mode);
+  ALL_KEYS.forEach(function(k){ g[k]=ks.indexOf(k)>=0?d.c[k]:0; });
+  g.rec=ks.slice();
+  g.mins=d.mins;
+  g.fmt=d.fmt;
+  g.pos=d.pos;
+  g.opp=d.opp;
+  g.mode=mode;
+  g.version=1; // for future migration
+  p.games.push(g);
+  ALL_KEYS.forEach(function(k){ d.c[k]=0; });
+  track('game_saved'); if(p.games.length===NEED) track('three_games_done');
+}
+function draftTotal(p){ var s=0, d=getDraft(p.id); keysFor(mode).forEach(function(k){ s+=d.c[k]; }); return s; }
+
+function langButtons(){
+  var host=$('langs'); host.textContent='';
+  LANGS.forEach(function(l){
+    var b=document.createElement('button'); b.textContent=l[1]; b.dataset.lang=l[0];
+    b.setAttribute('aria-pressed',l[0]===lang?'true':'false'); b.setAttribute('lang',l[0]);
+    host.appendChild(b);
+  });
+}
+function renderAll(){ renderPlayers(); buildForm(); paintDraft(); applyMode(); render(); }
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.title=t('title');
+  var md=document.querySelector('meta[name="description"]'); if(md) md.setAttribute('content',t('desc'));
+  var a=document.querySelectorAll('[data-i18n]'); for(var i=0;i<a.length;i++) a[i].textContent=t(a[i].getAttribute('data-i18n'));
+  a=document.querySelectorAll('[data-i18n-ph]'); for(i=0;i<a.length;i++) a[i].setAttribute('placeholder',t(a[i].getAttribute('data-i18n-ph')));
+  a=document.querySelectorAll('[data-i18n-aria]'); for(i=0;i<a.length;i++) a[i].setAttribute('aria-label',t(a[i].getAttribute('data-i18n-aria')));
+  fillSelect('fmt',FMTS,DEF_META.fmt); fillSelect('pos',POSS,DEF_META.pos); fillSelect('opp',OPPS,DEF_META.opp);
+  buildForm(); buildNorms(); langButtons(); renderAll();
+}
+
+function mkGame(c,md,mins,pos){
+  var g={}; ALL_KEYS.forEach(function(k){ g[k]=c[k]||0; });
+  g.rec=keysFor(md).slice(); g.mins=mins; g.fmt='f4'; g.pos=pos||'pos_cen'; g.opp='opp_eq'; g.mode=md; g.version=1;
+  return g;
+}
+function sample(){
+  var a={id:uid(),name:t('sample_player',{n:'07'}),birth:'2018-03-14',externalId:null,groupId:null,games:[
+    mkGame({look:9,touch:8,dribA:6,dribOk:3,open:11,passAll:18,passOk:13,passFwd:4,weak:3,press:6,longA:5,longOk:2,retry:3},'video',16),
+    mkGame({look:11,touch:9,dribA:8,dribOk:5,open:12,passAll:20,passOk:15,passFwd:5,weak:4,press:5,longA:5,longOk:3,retry:4},'video',16),
+    mkGame({look:10,touch:10,dribA:7,dribOk:4,open:10,passAll:17,passOk:12,passFwd:4,weak:2,press:7,longA:5,longOk:3,retry:3},'video',16)]};
+  var b={id:uid(),name:t('sample_player',{n:'12'}),birth:'2017-11-02',externalId:null,groupId:null,games:[
+    mkGame({dribA:6,dribOk:3,passAll:16,passOk:12,passFwd:3,press:5,longA:5,longOk:2},'live',8,'pos_wing'),
+    mkGame({dribA:7,dribOk:4,passAll:18,passOk:14,passFwd:5,press:6,longA:5,longOk:3},'live',8,'pos_wing')]};
+  var c={id:uid(),name:t('sample_player',{n:'03'}),birth:'2018-07-21',externalId:null,groupId:null,games:[
+    mkGame({look:6,touch:7,dribA:4,dribOk:1,open:7,passAll:12,passOk:8,passFwd:2,weak:1,press:3,longA:4,longOk:1,retry:2},'video',16,'pos_def')]};
+  players=players.concat([a,b,c]); activeId=a.id; persist(); renderAll(); track('sample_loaded');
+}
+
+lang=detectLang(); load(); applyLang();
+
+$('langs').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b||!b.dataset.lang) return;
+  lang=b.dataset.lang; try{ localStorage.setItem(LSTORE,lang); }catch(err){}
+  hideErr('err'); hideErr('perr'); applyLang(); track('lang_'+lang);
+});
+$('players').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b||!b.dataset.pid) return;
+  activeId=b.dataset.pid; persist(); hideErr('err'); renderAll();
+});
+$('addp').addEventListener('click', function(){
+  var name=$('pname').value.trim(), birth=$('pbirth').value;
+  if(!name){ showErr('perr',t('e_name')); return; }
+  if(!birth || ageMonthsOf(birth)===null){ showErr('perr',t('e_birth')); return; }
+  hideErr('perr');
+  var p={id:uid(),name:name,birth:birth,externalId:null,groupId:null,games:[]};
+  players.push(p); activeId=p.id; $('pname').value=''; $('pbirth').value='';
+  persist(); renderAll(); track('player_added');
+});
+var delArmed=false;
+$('delp').addEventListener('click', function(){
+  var b=$('delp'), p=active(); if(!p) return;
+  if(!delArmed){ delArmed=true; b.textContent=t('del_confirm',{n:p.name}); setTimeout(function(){ delArmed=false; b.textContent=t('del_player'); },4000); return; }
+  delArmed=false; b.textContent=t('del_player');
+  players=players.filter(function(x){ return x.id!==p.id; }); delete draft[p.id];
+  activeId=players.length?players[0].id:null; persist(); renderAll();
+});
+$('m-live').addEventListener('click', function(){ mode='live'; persist(); hideErr('err'); applyMode(); });
+$('m-video').addEventListener('click', function(){ mode='video'; persist(); hideErr('err'); applyMode(); track('mode_video'); });
+
+$('items').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b||!b.dataset.k) return;
+  var p=active(); if(!p){ showErr('err',t('e_need')); return; }
+  var d=getDraft(p.id), k=b.dataset.k;
+  d.c[k]=Math.max(0,d.c[k]+parseInt(b.dataset.d,10));
+  $('n_'+k).textContent=d.c[k]; hideErr('err');
+});
+$('mins').addEventListener('input', function(){ var p=active(); if(p) getDraft(p.id).mins=parseInt($('mins').value,10)||0; });
+['fmt','pos','opp'].forEach(function(id){ $(id).addEventListener('change', function(){ var p=active(); if(p) getDraft(p.id)[id]=$(id).value; }); });
+
+$('save').addEventListener('click', function(){
+  var p=active(); if(!p){ showErr('err',t('e_need')); return; }
+  var m=validate(p); if(m){ showErr('err',p.name+': '+m); return; }
+  hideErr('err'); saveGame(p); persist(); renderAll();
+});
+$('saveall').addEventListener('click', function(){
+  if(!players.length){ showErr('err',t('e_need')); return; }
+  var errs=[], saved=0;
+  players.forEach(function(p){
+    if(draftTotal(p)===0) return;
+    var m=validate(p); if(m){ errs.push(p.name+': '+m); return; }
+    saveGame(p); saved++;
+  });
+  if(!saved && !errs.length){ showErr('err',t('e_emptyall')); return; }
+  if(errs.length) showErr('err',(saved?t('saved_n',{n:saved}):'')+t('not_saved')+errs.join(' ')); else hideErr('err');
+  persist(); renderAll();
+});
+$('clearform').addEventListener('click', function(){
+  var p=active(); if(!p) return;
+  var d=getDraft(p.id); ALL_KEYS.forEach(function(k){ d.c[k]=0; }); paintDraft(); hideErr('err');
+});
+$('sample').addEventListener('click', sample);
+var wipeArmed=false;
+$('wipe').addEventListener('click', function(){
+  var b=$('wipe');
+  if(!wipeArmed){ wipeArmed=true; b.textContent=t('wipe_confirm'); setTimeout(function(){ wipeArmed=false; b.textContent=t('wipe_btn'); },4000); return; }
+  wipeArmed=false; b.textContent=t('wipe_btn');
+  players=[]; activeId=null; draft={};
+  try{ localStorage.removeItem(STORE); localStorage.removeItem(OLD); }catch(e){}
+  renderAll();
+});
+$('result').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b||b.dataset.rm===undefined) return;
+  var p=active(); if(!p) return;
+  p.games.splice(parseInt(b.dataset.rm,10),1); persist(); renderAll();
+});
+$('normreset').addEventListener('click', function(){ norms=JSON.parse(JSON.stringify(NORMS_DEF)); buildNorms(); persist(); render(); });
+</script>
+</body>
+</html>
